@@ -11,8 +11,8 @@
 접두어 OUT - WRITE - 쓰기 전용 빨대**
 
 ```java
-Scanner s = new Scanner(System.**in**);
-System.**out**.println();
+Scanner s = new Scanner(System.in);
+System.out.println();
 ```
 
 - Java에서 I/O를 흔히 **Stream**으로 부름.  
@@ -97,7 +97,7 @@ InputStream의 메소드 중 reset(), mark()와 같은 메소드는 이런 커�
 <br>
 
 <details>
-	<summary><strong>버퍼에 대한 추가 조사</strong></summary>
+	<summary><strong>버퍼에 대한 추가 조사 (클릭) </strong></summary>
 <div markdown="1">
 <br>
 	
@@ -131,8 +131,7 @@ public static void main(String[] args)throws Exception { InputStream in = new Fi
 - **while 구문 - 파일의 크기를 알 수 없으므로 while(true) 이용하여 데이터 읽기**
 ```java
 public static void main(String[] args)throws Exception {
-		InputStream in = 
-							new FileInputStream("C:\\zzz\\aaa.txt"); 
+		InputStream in = new FileInputStream("C:\\zzz\\aaa.txt"); 
 
   while(true){ 
 		//한바이트를 읽어들인 결과 
@@ -176,7 +175,6 @@ write(byte[ ])은 파라미터로 입력된 데이터를 한 번에 원하는 �
 
 - **flush( ) - 스트림에 기록된 데이터를 확실히 보낼 수 있다.**  
 flush - ‘물을 내리다’ / 확실하게, 강제로 보낼 때 사용  
-
 <br>
 
 ### FileOutputStream 이용하여 파일에 원하는 데이터 기록하기  
@@ -185,7 +183,7 @@ flush - ‘물을 내리다’ / 확실하게, 강제로 보낼 때 사용
 FileInputStream이나 FileOutputStream 모두 외부와 통신을 하는 방식이기 때문에 이와 관련된 **예외**를 명시적으로 처리해줘야 한다.  
 
 ## 문자열은 byte[ ]로 변경 가능 - 'getBytes( )' 메소드 이용  
-```
+```java
 String str = "한글";
 byte[] arr = str.getBytes();
 System.out.println(Arrays.toString(arr));
@@ -196,12 +194,12 @@ System.out.println(Arrays.toString(arr));
 <br>
 
 - OutputStream의 write(byte[]) 이용해서 파일에 문자열 기록하기
-```
+```java
 public static void main(String[] args) throws Exception{	// OutputStream은 예외 처리!
 	OutputStream out = new FileOutputStream("aaa.txt");
 	String str = "이 문자열을 파일에 기록";
 	byte[] arr = str.getBytes();		// getBytes로 byte[] 배열로 변경
-	out.write(arr);				// write(byte[]) 메소드를 통해 바이트 안에 있는 문자열 데이터 한번에 기록
+	out.write(arr);	     // write(byte[]) 메소드를 통해 바이트 안에 있는 문자열 데이터 한번에 기록
 ```
 <br>
 
