@@ -74,23 +74,44 @@ InputStream과 OutputStream은 byte 기반의 데이터인 이미지나 데이�
 2. 메소드 read()를 이용하여 얻어진 InputStream(파이프)를 통해 데이터를 읽어들임.  
 예) read( ) 메소드 호출 10번 = 10개의 바이트 데이터를 읽어들임.  
 3. 그 결과는 int 타입으로 반환된다. **(이때, int 결과는 숫자가 아니라 한 바이트의 데이터 값으로 생각해야 한다)**  
-4. 더이상 읽어들일 데이터가 없는 경우 음수가 나온다.  
+4. 더 이상 읽어들일 데이터가 없는 경우 음수가 나온다.  
 
 - **InputStream의 read() 메소드는 추상 메소드로 정의되어 있다.**
 ```java
 public abstract int read() throws IOException
 ```
 
-어떤 종류의 InputStream을 얻던 우리가 알아야 하는 메소드는 read() 메소드만 보이게 되어 있다.  
-사용자 입장에서도 편리하고, InputStream을 상속하는 클래스를 새로 작성해도 read() 메소드는 반드시 구현되기 때문에, 
-**‘읽어들이는 대상’**에 맞춰서 구현하는 방식을 지원하기 위해 추상 메소드 형태로 제공된다.  
+어떤 종류의 InputStream을 얻든, 우리가 알아야 하는 메소드는 read() 메소드만 보이게 되어 있다.  
+사용자 입장에서도 편리하고, InputStream을 상속하는 클래스를 새로 작성해도 read() 메소드는 반드시 구현된다.  
+따라서, **‘읽어들이는 대상’**에 맞춰서 구현하는 방식을 지원하기 위해 추상 메소드 형태로 제공된다.  
 
 - **read() 메소드를 호출하면 내부적으로 위치가 조금씩 변경**되고(내부적인 커서 cursor 이동), 때문에 다음 데이터를 읽어들이는 구조가 됨.  
 InputStream의 메소드 중 reset(), mark()와 같은 메소드는 이런 커서의 위치를 조절하고 싶은 경우에 사용  
 
 - **read(byte[ ]) 메소드는 한 번에 byte[ ]만큼씩 데이터를 읽어 낸다.**  
-InputStream의 read( ) 메소드는 read(byte[ ])의 형태로도 제공됨.  
-이 메소드 역시 int 값을 반환하지만, **이 int 값은 새로운 데이터 몇 개가 byte[ ]로 들어갔는지를 의미하는 숫자이다.**  
+	- InputStream의 read( ) 메소드는 read(byte[ ])의 형태로도 제공됨.  
+	- 이 메소드 역시 int 값을 반환하지만, **이 int 값은 byte[ ]로 새로이 읽혀 들어간 데이터의 바이트 수를 의미한다.**  
+	- 메소드가 실행될 때 데이터를 실제로 담기 위해서 사용되는 것은 파라미터로 추가된 byte[]이다. 
+	- 즉, 데이터가 한 번에 byte[]만큼 담기는 방식이다. 즉, read()가 데이터 하나씩 옮기는 방식이라면, read(byte[])는 byte[] 자체가 데이터를 임시로 담는 공간이다. 이런 공간을 buffer라는 용어로 부른다.
+	- **예)** 한 번에 4byte를 읽어내는 보관 장치(buffer)라면, 한 번에 1바이트 읽는 read()보다 속도가 빨라질 것.
+<br>
+
+<details>
+	<summary><strong>버퍼에 대한 추가 조사</strong></summary>
+<div markdown="1">
+<br>
+	
+> '버퍼'는 데이터를 한 곳에서 다른 한 곳으로 전송하는 동안 일시적으로 그 데이터를 보관하는 메모리의 영역.  
+> 버퍼링(buffering)이란 버퍼를 활용하는 방식 또는 버퍼를 채우는 동작을 말한다.
+> 다른 말로 '큐(Queue)'라고 표현한다.  
+> 버퍼는 컴퓨터 안의 프로세스 사이에서 데이터를 이동시킬 때 사용된다. 보통 데이터는 키보드와 같은 입력 장치로부터 받거나 프린터와 같은 출력 장치로 내보낼 때 버퍼 안에 저장된다. 이는 전자 통신의 버퍼와 비유할 수 있다. 버퍼는 하드웨어나 소프트웨어에 추가될 수 있지만 버퍼는 상당수가 소프트웨어에 추가된다. 버퍼는 보통 속도가 계속 바뀔 수 있으므로 데이터 수신, 처리 속도에 차이가 있다. (예: 프린터 스풀러)  
+> 버퍼는 네트워크 상에서 자료를 주고 받을 때나 스피커에 소리를 재생할 때, 또는 디스크 드라이브와 같은 하드웨어의 입출력을 결합하는 데에 자주 이용된다. 버퍼는 또한 순서대로 데이터를 출력하는 FIFO 방식에서 보통 사용된다.  
+> (출처 : 위키백과)
+
+</div>
+</details>
+
+<br>
 
 - **FileInputStream - 파일에서 데이터를 읽어내는 기능의 클래스**
 
@@ -129,7 +150,12 @@ public static void main(String[] args)throws Exception {
 1. 어떤 클래스의 형태로 제공되는 경우  
 2. 어떤 클래스의 어떤 메소드의 실행결과로 OutputStream 계열을 반환해주는 경우  
 
-- **write(int) : 한 바이트에 해당하는 데이터를 기록할 때 사용**  
+- OutputStream의 write 메소드 - 3가지
+> 1. write(int)
+> 2. write(byte[])
+> 3. write(byte[], int, int)
+
+- **1) write(int) : 한 바이트에 해당하는 데이터를 기록할 때 사용**  
 
 ```java
 public abstract void write(int b) throws IOException
@@ -138,12 +164,12 @@ public abstract void write(int b) throws IOException
 write(int) 메소드는 추상 메소드  
 InputStream의 read()와 마찬가지로 실제로 ‘**데이터를 기록하는 방법은 연결된 대상이 파일이나 네트워크냐’에 따라서 다르게 동작해야 하기 때문에 추상 메소드의 형태로만 제공**  
 
-- **write(byte[ ])은 byte안에 있는 데이터를 한 번에 기록해준다.**  
+- **2) write(byte[ ])은 byte안에 있는 데이터를 한 번에 기록해준다.**  
 write(int) 방식은 파라미터로 들어오는 한 바이트에 해당하는 데이터만을 넣어준다.    
 write(byte[ ])은 파라미터로 입력된 데이터를 한 번에 원하는 대상으로 데이터를 출력하는 기능  
 따라서 원하는 데이터를 **바이트의 배열**로 만든 후, OutputStream을 통해서 출력하면 그 데이터는 **OutputStream이 연결된 대상**으로 기록됨.  
 
-- **write(byte[ ], int , int)**는 **byte[ ]**  
+- **3) write(byte[ ], int , int)**는 **byte[ ]**  -> 제일 많이 씀
 데이터를 원하는 위치에서부터 원하는 숫자만큼 기록해 준다.    
 첫 번째 int 파라미터 - byte안에서의 기록 시작 위치.   
 두 번째 int 파라미터 - 기록을 원하는 데이터의 수.  
@@ -154,17 +180,34 @@ flush - ‘물을 내리다’ / 확실하게, 강제로 보낼 때 사용
 <br>
 
 ### FileOutputStream 이용하여 파일에 원하는 데이터 기록하기  
-- FileOutputStream은 객체를 만들기 위해서 파일명을 지정해주면, 파일이 없는 경우에는 **자동으로 파일을 만들고, 파일이 있는 경우에는 기존의 파일을 덮어쓰게 된다.**  
+- FileOutputStream은 객체를 만들기 위해서 파일명을 지정해주면, 파일이 없는 경우에는 **자동으로 파일을 만들고, 파일이 있는 경우에는 기존의 파일을 덮어쓰게 된다.**  (따라서 파일의 존재 여부는 신경쓰지 않아도 됨)
 - **주의할 점**  
 FileInputStream이나 FileOutputStream 모두 외부와 통신을 하는 방식이기 때문에 이와 관련된 **예외**를 명시적으로 처리해줘야 한다.  
-- 문자열은 byte[ ]로 변경 가능 - **getBytes( )** 메소드 이용  
 
+## 문자열은 byte[ ]로 변경 가능 - 'getBytes( )' 메소드 이용  
+```
+String str = "한글";
+byte[] arr = str.getBytes();
+System.out.println(Arrays.toString(arr));
+// 결과 : -57, -47, -79, -37
+```
+문자열은 위의 예처럼 손쉽게 byte[]로 전환할 수 있기 때문에 OutputStream의 write(byte[]) 기능을 이용해 주면 쉽게 파일 데이터를 기록해줄 수 있다.  
+(+ 참고 : '한글' 문자열은 4byte로 변환되며, byte[]로 변경된 데이터는 각 바이트가 -128에서 127까지의 범위 내의 숫자로 표현된다.)
+<br>
+
+- OutputStream의 write(byte[]) 이용해서 파일에 문자열 기록하기
+```
+public static void main(String[] args) throws Exception{	// OutputStream은 예외 처리!
+	OutputStream out = new FileOutputStream("aaa.txt");
+	String str = "이 문자열을 파일에 기록";
+	byte[] arr = str.getBytes();		// getBytes로 byte[] 배열로 변경
+	out.write(arr);				// write(byte[]) 메소드를 통해 바이트 안에 있는 문자열 데이터 한번에 기록
+```
 <br>
 
 ## 입출력 프로그래밍에서 사용한 파이프는 반드시 close( )해야 한다.  
-- **InputStream, OutputStream** 같은 데이터의 연결 파이프(Stream)은 사용 후 반드시 **close()를 통해 연결 종료**를 시켜줘야 함.  
-입출력 프로그래밍은 기본적으로 외부와의 통신이 주를 이룬다.    
-(파일에서 데이터를 읽거나 네트워크 사용 등과 같이 외부와 JVM 간의 통신)  
+- **InputStream, OutputStream** 같은 데이터의 연결 파이프(Stream)은 사용 후 반드시 **close()를 통해 연결 종료**를 시켜줘야 함. 
+입출력 프로그래밍은 기본적으로 외부와의 통신이 주를 이룬다. (파일에서 데이터를 읽거나 네트워크 사용 등과 같이 외부와 JVM 간의 통신)  
 close() 메소드를 해주지 않는 이상, 데이터를 출력해줘도 아직 JVM은 파일과의 연결을 종료한 상태가 아니기 때문에 여러 문제점이 발생하거나 심각한 메모리 낭비를 초래한다.  
 이를 막고자 모든 외부 연결을 맺는 코드에는 공통적으로 close()라는 메소드를 써준다.  
 
